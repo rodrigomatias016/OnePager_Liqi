@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Pager — Liqi Digital Assets</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 12px;
+    background: #f0f2f5;
+    color: #1a1a2e;
+  }
+
+  /* ── Toolbar ── */
+  #toolbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: #1e293b;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  }
+  #toolbar h2 { font-size: 14px; font-weight: 600; flex: 1; }
+  #toolbar button {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: background .2s;
+  }
+  .btn-print  { background: #2563eb; color: #fff; }
+  .btn-reset  { background: #64748b; color: #fff; }
+  .btn-print:hover  { background: #1d4ed8; }
+  .btn-reset:hover  { background: #475569; }
+
+  /* ── Page wrapper ── */
+  #page {
+    margin-top: 52px;
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+    background: #fff;
+    padding: 28px 32px 36px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.12);
+  }
+
+  /* ── Header ── */
+  .doc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+  .logo-liqi {
+    font-size: 22px;
+    font-weight: 800;
+    color: #2563eb;
+    letter-spacing: -0.5px;
+  }
+  .logo-liqi span { color: #7c3aed; }
+  .header-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .tag-pill {
+    border: 1.5px solid #94a3b8;
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #334155;
+    background: #fff;
+    white-space: nowrap;
+  }
+  .tag-pill[contenteditable="true"]:focus {
+    border-color: #2563eb;
+    outline: none;
+    background: #eff6ff;
+  }
+
+  .doc-title {
+    margin-bottom: 4px;
+  }
+  .doc-title h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #1e293b;
+  }
+  .doc-title h1 .highlight {
+    color: #7c3aed;
+  }
+  .doc-subtitle {
+    font-size: 11px;
+    color: #64748b;
+    letter-spacing: 0.3px;
+  }
+  .doc-subtitle span { margin: 0 4px; }
+
+  hr.divider { border: none; border-top: 1.5px solid #e2e8f0; margin: 14px 0; }
+
+  /* ── Sections ── */
+  .section { margin-bottom: 24px; }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .section-num {
+    width: 22px; height: 22px;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: #475569;
+    text-transform: uppercase;
+  }
+  .badge-caso {
+    font-size: 9px;
+    font-weight: 700;
+    background: #e2e8f0;
+    color: #475569;
+    border-radius: 4px;
+    padding: 2px 6px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Editable fields ── */
+  [contenteditable="true"] {
+    outline: none;
+    border-radius: 3px;
+    transition: background .15s;
+    min-width: 60px;
+    display: inline-block;
+  }
+  [contenteditable="true"]:hover { background: #f8fafc; }
+  [contenteditable="true"]:focus {
+    background: #eff6ff;
+    box-shadow: 0 0 0 2px #bfdbfe;
+  }
+  .field-italic {
+    font-style: italic;
+    color: #64748b;
+  }
+
+  /* ── Table: Resumo ── */
+  .resumo-table { width: 100%; border-collapse: collapse; }
+  .resumo-table tr { border-bottom: 1px solid #e2e8f0; }
+  .resumo-table tr:last-child { border-bottom: none; }
+  .resumo-table td {
+    padding: 7px 10px;
+    vertical-align: top;
+  }
+  .resumo-table td:first-child {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #334155;
+    text-transform: uppercase;
+    width: 200px;
+    white-space: nowrap;
+  }
+  .resumo-table td:last-child {
+    color: #475569;
+  }
+  .resumo-table tbody { border: 1px solid #e2e8f0; border-radius: 8px; }
+  .table-wrap { border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+
+  /* ── Fluxograma ── */
+  .fluxo-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 20px 16px 16px;
+  }
+  .fluxo-timeline {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+    margin-bottom: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #64748b;
+  }
+  .fluxo-timeline .t-solid { border-bottom: 2px solid #2563eb; padding-bottom: 2px; }
+  .fluxo-timeline .t-dashed { border-bottom: 2px dashed #2563eb; padding-bottom: 2px; }
+
+  .fluxo-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .fluxo-actor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 100px;
+  }
+  .fluxo-icon {
+    font-size: 28px;
+    margin-bottom: 4px;
+  }
+  .fluxo-actor strong {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1e293b;
+  }
+  .fluxo-actor small {
+    font-size: 9px;
+    color: #64748b;
+  }
+  .fluxo-actor.highlight-box {
+    border: 2px solid #2563eb;
+    border-radius: 10px;
+    padding: 8px 12px;
+    background: #fff;
+  }
+  .fluxo-actor.highlight-box strong { color: #2563eb; }
+
+  .fluxo-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 9px;
+    color: #2563eb;
+    font-weight: 600;
+    gap: 2px;
+    min-width: 70px;
+  }
+  .arrow-label {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 8px;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .arrow-line { font-size: 16px; line-height: 1; }
+
+  .fluxo-bottom {
+    display: flex;
+    justify-content: space-around;
+    gap: 16px;
+    margin-top: 4px;
+  }
+  .fluxo-secondary {
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 8px;
+    padding: 8px 14px;
+    text-align: center;
+    font-size: 10px;
+    color: #475569;
+    flex: 1;
+  }
+  .fluxo-secondary.garantidor {
+    border-color: #e879f9;
+    background: #fdf4ff;
+    color: #6b21a8;
+  }
+  .fluxo-secondary strong { display: block; font-size: 11px; margin-bottom: 2px; }
+
+  .fluxo-steps {
+    margin-top: 12px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 10px;
+  }
+  .fluxo-steps ol {
+    padding-left: 18px;
+  }
+  .fluxo-steps li {
+    margin-bottom: 5px;
+    font-size: 11px;
+    color: #334155;
+    line-height: 1.5;
+  }
+
+  /* ── Revolvência timeline ── */
+  .revolv-row {
+    display: flex;
+    gap: 0;
+    margin-top: 10px;
+  }
+  .revolv-step {
+    flex: 1;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-right: none;
+    padding: 10px 10px;
+    position: relative;
+  }
+  .revolv-step:last-child { border-right: 1px solid #e2e8f0; border-radius: 0 8px 8px 0; }
+  .revolv-step:first-child { border-radius: 8px 0 0 8px; }
+  .revolv-step::after {
+    content: '›';
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #2563eb;
+    font-weight: 700;
+    z-index: 1;
+    background: #fff;
+    line-height: 1;
+  }
+  .revolv-step:last-child::after { display: none; }
+  .revolv-step .step-day {
+    font-size: 11px;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 4px;
+  }
+  .revolv-step .step-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 3px;
+  }
+  .revolv-step .step-desc {
+    font-size: 9px;
+    color: #64748b;
+    line-height: 1.4;
+  }
+
+  /* ── Garantia flow ── */
+  .garantia-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin-top: 10px;
+  }
+  .gar-box {
+    flex: 1;
+    border: 1px solid #e2e8f0;
+    border-right: none;
+    padding: 12px;
+  }
+  .gar-box:last-child { border-right: 1px solid #e2e8f0; border-radius: 0 8px 8px 0; }
+  .gar-box:first-child { border-radius: 8px 0 0 8px; }
+  .gar-box .gar-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 6px;
+  }
+  .gar-box.center { border-left: 3px solid #e879f9; background: #fdf4ff; }
+  .gar-box.center .gar-label { color: #a855f7; }
+  .gar-box.right .gar-label { color: #1e293b; }
+  .gar-box strong { display: block; font-size: 12px; color: #1e293b; margin-bottom: 4px; }
+  .gar-box p { font-size: 10px; color: #475569; line-height: 1.4; }
+  .gar-arrow { display: flex; align-items: center; color: #a855f7; font-size: 18px; }
+
+  /* ── Sub-tables ── */
+  .sub-table-wrap { margin-bottom: 12px; }
+  .sub-table-title {
+    background: #1e3a8a;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    padding: 6px 12px;
+    text-transform: uppercase;
+    border-radius: 6px 6px 0 0;
+  }
+  .sub-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #e2e8f0;
+    border-top: none;
+  }
+  .sub-table tr { border-bottom: 1px solid #e2e8f0; }
+  .sub-table tr:last-child { border-bottom: none; }
+  .sub-table td {
+    padding: 6px 12px;
+    vertical-align: top;
+    font-size: 11px;
+  }
+  .sub-table td:first-child {
+    color: #475569;
+    width: 180px;
+    font-size: 10px;
+  }
+  .sub-table td:last-child { color: #334155; }
+
+  .tables-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  /* ── Cascata ── */
+  .cascata-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .cascata-box { border-radius: 6px; overflow: hidden; }
+  .cascata-header {
+    padding: 7px 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #fff;
+  }
+  .cascata-header.ordinaria { background: #1e3a8a; }
+  .cascata-header.extraordinaria { background: #7c3aed; }
+  .cascata-body {
+    border: 1px solid #e2e8f0;
+    border-top: none;
+    padding: 10px 12px;
+  }
+  .cascata-body ol { padding-left: 16px; }
+  .cascata-body li {
+    margin-bottom: 8px;
+    font-size: 11px;
+    color: #334155;
+    line-height: 1.4;
+  }
+  .cascata-body li small {
+    display: block;
+    font-size: 10px;
+    color: #94a3b8;
+    margin-top: 2px;
+  }
+  .cascata-body li span.add-item {
+    color: #2563eb;
+    cursor: pointer;
+    font-size: 10px;
+  }
+
+  .ativacao-box {
+    border-left: 3px solid #ec4899;
+    background: #fff7fb;
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+  }
+  .ativacao-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: #ec4899;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .ativacao-box p { font-size: 11px; color: #334155; line-height: 1.5; }
+
+  /* ── Fee table ── */
+  .fee-table { width: 100%; border-collapse: collapse; }
+  .fee-table thead tr { background: #2563eb; }
+  .fee-table thead th {
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    text-align: left;
+  }
+  .fee-table tbody tr { border-bottom: 1px solid #e2e8f0; }
+  .fee-table tbody td {
+    padding: 7px 12px;
+    font-size: 11px;
+    color: #334155;
+  }
+  .fee-table tbody td:first-child {
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.3px;
+    color: #1e293b;
+  }
+  .fee-table-wrap {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  /* ── Info blocks ── */
+  .info-block {
+    border-left: 3px solid #2563eb;
+    background: #eff6ff;
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 10px;
+  }
+  .info-block.orange {
+    border-left-color: #f97316;
+    background: #fff7ed;
+  }
+  .info-block-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: #2563eb;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .info-block.orange .info-block-title { color: #ea580c; }
+  .info-block p { font-size: 11px; color: #334155; line-height: 1.5; }
+
+  /* ── Footer ── */
+  .doc-footer {
+    background: #1e293b;
+    color: #94a3b8;
+    padding: 12px 20px;
+    border-radius: 0 0 8px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    margin: 24px -32px -36px;
+  }
+  .doc-footer .logo-foot { color: #fff; font-weight: 700; font-size: 13px; }
+  .doc-footer .logo-foot span { color: #7c3aed; }
+
+  /* ── Sim badge ── */
+  .badge-sim {
+    background: #dcfce7;
+    color: #16a34a;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  /* ── Print ── */
+  @media print {
+    #toolbar { display: none; }
+    body { background: #fff; }
+    #page { margin: 0; box-shadow: none; padding: 20px 24px 28px; }
+    [contenteditable="true"]:focus,
+    [contenteditable="true"]:hover { background: transparent; box-shadow: none; }
+    .doc-footer { margin: 20px -24px -28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Toolbar -->
+<div id="toolbar">
+  <h2>One Pager · Liqi Digital Assets</h2>
+  <button class="btn-reset" onclick="resetFields()">Limpar campos</button>
+  <button class="btn-print" onclick="window.print()">Imprimir / Exportar PDF</button>
+</div>
+
+<!-- Page -->
+<div id="page">
+
+  <!-- Header -->
+  <div class="doc-header">
+    <div class="logo-liqi">liqi<span>.</span></div>
+    <div class="header-tags">
+      <span class="tag-pill" contenteditable="true" data-default="[INSTRUMENTO]">[INSTRUMENTO]</span>
+      <span class="tag-pill" contenteditable="true" data-default="[TIPO DE OPERAÇÃO]">[TIPO DE OPERAÇÃO]</span>
+      <span class="tag-pill" contenteditable="true" data-default="[LASTRO]">[LASTRO]</span>
+      <span class="tag-pill" contenteditable="true" data-default="[TIPO DE ATIVO]">[TIPO DE ATIVO]</span>
+    </div>
+  </div>
+
+  <div class="doc-title">
+    <h1>One Pager — <span class="highlight" contenteditable="true" data-default="[NOME DA OPERAÇÃO]">[NOME DA OPERAÇÃO]</span></h1>
+  </div>
+  <div class="doc-subtitle">
+    <span contenteditable="true" data-default="[EMISSOR / CEDENTE]">[EMISSOR / CEDENTE]</span>
+    <span>·</span>
+    <span contenteditable="true" data-default="[ESTRUTURA]">[ESTRUTURA]</span>
+    <span>·</span>
+    <span contenteditable="true" data-default="[VOLUME]">[VOLUME]</span>
+    <span>·</span>
+    <span contenteditable="true" data-default="[MÊS / ANO]">[MÊS / ANO]</span>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 1. Resumo da Operação -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num">1</div>
+      <span class="section-label">Resumo da Operação</span>
+    </div>
+    <div class="table-wrap">
+      <table class="resumo-table">
+        <tbody>
+          <tr><td>Instrumento</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Tipo de Operação</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Devedor / Cedente</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Lastro</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Volume</td><td><strong><span contenteditable="true" data-default="A definir">A definir</span></strong></td></tr>
+          <tr><td>Séries e Classes</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Remunerações das Séries</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Prazo</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Garantia</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Agente Fiduciário</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Banco Liquidante e Escriturador</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Custodiante</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 2. Fluxograma -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num">2</div>
+      <span class="section-label">Fluxograma da Estrutura</span>
+    </div>
+    <div class="fluxo-box">
+      <div class="fluxo-timeline">
+        <span class="t-solid">D+0</span>
+        <span class="t-dashed">D+n</span>
+      </div>
+      <div class="fluxo-row">
+        <!-- Devedores -->
+        <div class="fluxo-actor">
+          <div class="fluxo-icon">👤</div>
+          <strong contenteditable="true" data-default="[Devedores]">[Devedores]</strong>
+          <small contenteditable="true" data-default="ex: Clientes PF / Empresas Sacadas">ex: Clientes PF / Empresas Sacadas</small>
+        </div>
+
+        <div class="fluxo-arrow">
+          <span class="arrow-label" contenteditable="true" data-default="① [lastro / crédito]">① [lastro / crédito]</span>
+          <span class="arrow-line">→</span>
+        </div>
+
+        <!-- Cedente -->
+        <div class="fluxo-actor">
+          <div class="fluxo-icon">💼</div>
+          <strong contenteditable="true" data-default="[Cedente / Originador]">[Cedente / Originador]</strong>
+          <small contenteditable="true" data-default="ex: Nome da empresa">ex: Nome da empresa</small>
+        </div>
+
+        <div class="fluxo-arrow">
+          <span class="arrow-label" contenteditable="true" data-default="② [cessão / CPR-F]">② [cessão / CPR-F]</span>
+          <span class="arrow-line">⇄</span>
+          <span class="arrow-label">② R$</span>
+        </div>
+
+        <!-- Liqi -->
+        <div class="fluxo-actor highlight-box">
+          <div class="fluxo-icon">🏢</div>
+          <strong>Liqi Digital Assets</strong>
+          <small>Securitizadora / Emissora</small>
+        </div>
+
+        <div class="fluxo-arrow">
+          <span class="arrow-label" contenteditable="true" data-default="③ [Títulos / Série]">③ [Títulos / Série]</span>
+          <span class="arrow-line">⇄</span>
+          <span class="arrow-label">③ R$</span>
+        </div>
+
+        <!-- Investidores -->
+        <div class="fluxo-actor">
+          <div class="fluxo-icon">👥</div>
+          <strong>Investidores</strong>
+          <small contenteditable="true" data-default="ex: Qualificados / Profissionais">ex: Qualificados / Profissionais</small>
+        </div>
+      </div>
+
+      <div class="fluxo-bottom">
+        <div class="fluxo-secondary">
+          <strong>Conta Vinculada / Centralizadora</strong>
+          <span contenteditable="true" data-default="[Banco — cód. XXX | Ag. XXX | Cta. XXXXXXX]">[Banco — cód. XXX | Ag. XXX | Cta. XXXXXXX]</span>
+        </div>
+        <div class="fluxo-secondary garantidor">
+          <strong>Garantidor <em style="font-size:9px;font-weight:400;">— se aplicável</em></strong>
+          <span contenteditable="true" data-default="ex: BRDE / FGI / Avalista — Fiança / Aval">ex: BRDE / FGI / Avalista — Fiança / Aval</span>
+        </div>
+      </div>
+
+      <div class="fluxo-steps">
+        <ol id="fluxo-steps-list">
+          <li contenteditable="true" data-default="[Descrever passo 1 — ex: O Cedente cede os créditos em benefício da Liqi Securitizadora.]">[Descrever passo 1 — ex: O Cedente cede os créditos em benefício da Liqi Securitizadora.]</li>
+          <li contenteditable="true" data-default="[Descrever passo 2 — ex: A Liqi emite os títulos com lastro nos créditos cedidos. Os Investidores integralizam; a Liqi repassa os recursos ao Cedente.]">[Descrever passo 2 — ex: A Liqi emite os títulos com lastro nos créditos cedidos. Os Investidores integralizam; a Liqi repassa os recursos ao Cedente.]</li>
+          <li contenteditable="true" data-default="[Descrever passo 3 — ex: O Cedente realiza os pagamentos na Conta Vinculada. A Liqi utiliza os recursos para honrar amortizações e remuneração nas datas previstas.]">[Descrever passo 3 — ex: O Cedente realiza os pagamentos na Conta Vinculada. A Liqi utiliza os recursos para honrar amortizações e remuneração nas datas previstas.]</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Revolvência -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num">3</div>
+      <span class="section-label">Revolvência</span>
+      <span class="badge-caso">CASO A CASO</span>
+    </div>
+    <div class="table-wrap" style="padding:10px 14px 6px; border-radius:8px;">
+      <table class="resumo-table">
+        <tbody>
+          <tr><td style="width:200px;">Data Limite de Revolvência</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="revolv-row">
+      <div class="revolv-step">
+        <div class="step-day" contenteditable="true" data-default="D">D</div>
+        <div class="step-title">Cedente indica créditos</div>
+        <div class="step-desc" contenteditable="true" data-default="Relação de créditos elegíveis a serem cedidos">Relação de créditos elegíveis a serem cedidos</div>
+      </div>
+      <div class="revolv-step">
+        <div class="step-day" contenteditable="true" data-default="D + [X] DU">D + [X] DU</div>
+        <div class="step-title">Liqi verifica e retorna</div>
+        <div class="step-desc" contenteditable="true" data-default="Análise de elegibilidade e aprovação dos créditos">Análise de elegibilidade e aprovação dos créditos</div>
+      </div>
+      <div class="revolv-step">
+        <div class="step-day" contenteditable="true" data-default="D + [X] DU">D + [X] DU</div>
+        <div class="step-title">Cessão formalizada</div>
+        <div class="step-desc" contenteditable="true" data-default="Assinatura do Termo de Cessão">Assinatura do Termo de Cessão</div>
+      </div>
+      <div class="revolv-step">
+        <div class="step-day" contenteditable="true" data-default="D + [X] DU">D + [X] DU</div>
+        <div class="step-title">Desembolso realizado</div>
+        <div class="step-desc" contenteditable="true" data-default="Transferência ao Cedente">Transferência ao Cedente</div>
+      </div>
+      <div class="revolv-step">
+        <div class="step-day" contenteditable="true" data-default="D + [X] DU">D + [X] DU</div>
+        <div class="step-title">Aditamento escritura / TS</div>
+        <div class="step-desc" contenteditable="true" data-default="Atualização dos documentos da emissão">Atualização dos documentos da emissão</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Garantia -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num">4</div>
+      <span class="section-label">Garantia</span>
+      <span class="badge-caso">CASO A CASO</span>
+    </div>
+    <div class="table-wrap" style="padding:10px 14px 6px; border-radius:8px 8px 0 0; border-bottom:none;">
+      <table class="resumo-table">
+        <tbody>
+          <tr><td style="width:200px;">Garantidor</td><td><span contenteditable="true" class="field-italic" data-default="A definir — se aplicável">A definir — se aplicável</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="garantia-flow">
+      <div class="gar-box">
+        <div class="gar-label">Devedor / Cedente</div>
+        <strong contenteditable="true" data-default="[Nome]">[Nome]</strong>
+        <p contenteditable="true" data-default="[Obrigação garantida — ex: pagamento das Debêntures]">[Obrigação garantida — ex: pagamento das Debêntures]</p>
+      </div>
+      <div class="gar-arrow">›</div>
+      <div class="gar-box center">
+        <div class="gar-label">Garantia</div>
+        <strong contenteditable="true" data-default="[Tipo de Garantia]">[Tipo de Garantia]</strong>
+        <p contenteditable="true" data-default="ex: Alienação fiduciária de imóvel / Aval dos sócios / FGI / Cessão fiduciária">ex: Alienação fiduciária de imóvel / Aval dos sócios / FGI / Cessão fiduciária</p>
+      </div>
+      <div class="gar-arrow">›</div>
+      <div class="gar-box right">
+        <div class="gar-label">Beneficiário</div>
+        <strong>Agente Fiduciário / Liqi</strong>
+        <p>Em favor dos Investidores</p>
+        <p contenteditable="true" data-default="[Instrumento: ex: Escritura de Alienação / Contrato de Aval]">[Instrumento: ex: Escritura de Alienação / Contrato de Aval]</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Datas · Amortização · Remuneração · Fundos -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num">5</div>
+      <span class="section-label">Datas · Amortização · Remuneração · Fundos</span>
+    </div>
+
+    <div class="sub-table-wrap">
+      <div class="sub-table-title">Amortização e Remuneração</div>
+      <table class="sub-table">
+        <tbody>
+          <tr>
+            <td>Remuneração</td>
+            <td><em>Periodicidade: </em><span contenteditable="true" data-default="A definir">A definir</span> | <em>1ª Data: </em><span contenteditable="true" data-default="A definir">A definir</span></td>
+          </tr>
+          <tr>
+            <td>Amort. Programada</td>
+            <td><em>Periodicidade: </em><span contenteditable="true" data-default="A definir">A definir</span> | <em>1ª Data: </em><span contenteditable="true" data-default="A definir">A definir</span></td>
+          </tr>
+          <tr>
+            <td>Amort. Extraordinária</td>
+            <td>
+              <span class="badge-sim">Sim</span>
+              <br><br>
+              <span style="font-size:10px; color:#475569;">Principais hipóteses: </span>
+              <span contenteditable="true" style="font-size:10px;" data-default="ex: (i) cash sweep — saldo ≥ R$ [X] na Conta Centralizadora, em até [X] DU da Data de Verificação, limitada a [X]% do VNU; (ii) evento de recompra compulsória">ex: (i) cash sweep — saldo ≥ R$ [X] na Conta Centralizadora, em até [X] DU da Data de Verificação, limitada a [X]% do VNU; (ii) evento de recompra compulsória</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sub-table-wrap">
+      <div class="sub-table-title">Datas de Verificação · Índices · Acompanhamentos</div>
+      <table class="sub-table">
+        <tbody>
+          <tr>
+            <td>Data de Verificação</td>
+            <td>
+              <span contenteditable="true" class="field-italic" data-default="A definir">A definir</span><br>
+              <small style="color:#94a3b8;">1ª Data de Verificação: <span contenteditable="true" data-default="A definir">A definir</span></small>
+            </td>
+          </tr>
+          <tr><td>Índices da Operação</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Outros Acompanhamentos</td><td><span contenteditable="true" class="field-italic" data-default="A definir — caso a caso">A definir — caso a caso</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tables-grid">
+      <div class="sub-table-wrap">
+        <div class="sub-table-title">Fundo de Despesa</div>
+        <table class="sub-table">
+          <tbody>
+            <tr><td>Valor Inicial</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+            <tr><td>Valor Mínimo</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sub-table-wrap">
+        <div class="sub-table-title" style="background:#475569;">Fundo de Reserva <span class="badge-caso" style="background:rgba(255,255,255,.2);color:#fff;">CASO A CASO</span></div>
+        <table class="sub-table">
+          <tbody>
+            <tr><td>Valor Inicial</td><td><span contenteditable="true" data-default="N/A">N/A</span></td></tr>
+            <tr><td>Valor Mínimo</td><td><span contenteditable="true" data-default="N/A">N/A</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Ordem de Alocação de Recursos -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num">6</div>
+      <span class="section-label">Ordem de Alocação de Recursos</span>
+    </div>
+    <div class="cascata-grid">
+      <div class="cascata-box">
+        <div class="cascata-header ordinaria">Cascata Ordinária</div>
+        <div class="cascata-body">
+          <ol id="cascata-ord">
+            <li><span contenteditable="true" data-default="ex: Fundo de Despesas — recomposição">ex: Fundo de Despesas — recomposição</span><small contenteditable="true" data-default="[sub-detalhe se necessário]">[sub-detalhe se necessário]</small></li>
+            <li><span contenteditable="true" data-default="ex: Remuneração dos titulares">ex: Remuneração dos titulares</span></li>
+            <li><span contenteditable="true" data-default="ex: Amortização Extraordinária">ex: Amortização Extraordinária</span><small contenteditable="true" data-default="[condições do cash sweep]">[condições do cash sweep]</small></li>
+            <li><span contenteditable="true" class="field-italic" data-default="Demais itens — a definir">Demais itens — a definir</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="cascata-box">
+        <div class="cascata-header extraordinaria">Cascata Extraordinária</div>
+        <div class="cascata-body">
+          <ol id="cascata-ext">
+            <li><span contenteditable="true" data-default="ex: Recompra Compulsória de Direitos Creditórios">ex: Recompra Compulsória de Direitos Creditórios</span><small contenteditable="true" data-default="[evento que a aciona]">[evento que a aciona]</small></li>
+            <li><span contenteditable="true" data-default="ex: Amortização Extraordinária das Debêntures">ex: Amortização Extraordinária das Debêntures</span><small contenteditable="true" data-default="[limite aplicável]">[limite aplicável]</small></li>
+            <li><span contenteditable="true" class="field-italic" data-default="Demais itens — a definir">Demais itens — a definir</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="ativacao-box">
+      <div class="ativacao-label">Ativação da Cascata Extraordinária</div>
+      <p contenteditable="true" data-default="A cascata extraordinária será acionada quando ocorrer qualquer dos seguintes eventos: (a) [descrever evento A — ex: evento de recompra compulsória pelo cedente]; (b) [descrever evento B]; (c) [descrever evento C — a definir].">A cascata extraordinária será acionada quando ocorrer qualquer dos seguintes eventos: (a) [descrever evento A — ex: evento de recompra compulsória pelo cedente]; (b) [descrever evento B]; (c) [descrever evento C — a definir].</p>
+    </div>
+  </div>
+
+  <!-- 7. Fee Liqi -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num">7</div>
+      <span class="section-label">Fee Liqi</span>
+    </div>
+    <div class="fee-table-wrap">
+      <table class="fee-table">
+        <thead>
+          <tr>
+            <th>Remuneração</th>
+            <th>Valor</th>
+            <th>Periodicidade</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Fee de Estruturação</td>
+            <td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td>
+            <td><span contenteditable="true" class="field-italic" data-default="—">—</span></td>
+          </tr>
+          <tr>
+            <td>Fee de Distribuição</td>
+            <td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td>
+            <td><span contenteditable="true" class="field-italic" data-default="—">—</span></td>
+          </tr>
+          <tr>
+            <td>Fee de Administração / Escrituração</td>
+            <td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td>
+            <td><span contenteditable="true" class="field-italic" data-default="—">—</span></td>
+          </tr>
+          <tr>
+            <td>Outras Remunerações</td>
+            <td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td>
+            <td><span contenteditable="true" class="field-italic" data-default="—">—</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 8. Informações Adicionais -->
+  <div class="section">
+    <div class="section-title">
+      <div class="section-num">8</div>
+      <span class="section-label">Informações Adicionais</span>
+    </div>
+    <div class="info-block">
+      <div class="info-block-title" contenteditable="true" data-default="[TÍTULO DO BLOCO — EX: MECANISMO DE PAGAMENTO]">[TÍTULO DO BLOCO — EX: MECANISMO DE PAGAMENTO]</div>
+      <p contenteditable="true" data-default="Texto da informação adicional. Descrever o mecanismo de pagamento, fluxo de recursos ou qualquer aspecto relevante da operação que mereça destaque ao leitor.">Texto da informação adicional. Descrever o mecanismo de pagamento, fluxo de recursos ou qualquer aspecto relevante da operação que mereça destaque ao leitor.</p>
+    </div>
+    <div class="info-block orange">
+      <div class="info-block-title" contenteditable="true" data-default="[TÍTULO DO 2º BLOCO — SE APLICÁVEL]">[TÍTULO DO 2º BLOCO — SE APLICÁVEL]</div>
+      <p contenteditable="true" data-default="Texto complementar — ex: detalhamento sobre amortização extraordinária, aceleração de vencimento ou eventos de inadimplência relevantes.">Texto complementar — ex: detalhamento sobre amortização extraordinária, aceleração de vencimento ou eventos de inadimplência relevantes.</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="doc-footer">
+    <div class="logo-foot">liqi<span>.</span></div>
+    <div>CNPJ 41.743.644/0001-57 · Documento de uso interno — confidencial</div>
+    <div>Liqi Digital Assets · Estruturação de Ativos</div>
+  </div>
+
+</div>
+
+<script>
+  function resetFields() {
+    if (!confirm('Limpar todos os campos e restaurar os valores padrão?')) return;
+    document.querySelectorAll('[contenteditable][data-default]').forEach(el => {
+      el.textContent = el.dataset.default;
+    });
+  }
+
+  // Highlight placeholder on focus
+  document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+    el.addEventListener('focus', function() {
+      const def = this.dataset.default;
+      if (this.textContent.trim() === def) {
+        const range = document.createRange();
+        range.selectNodeContents(this);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    });
+  });
+</script>
+</body>
+</html>
