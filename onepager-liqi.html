@@ -551,6 +551,140 @@
     font-weight: 700;
   }
 
+  /* ── AI Button ── */
+  .btn-ai { background: #7c3aed; color: #fff; }
+  .btn-ai:hover { background: #6d28d9; }
+
+  /* ── Modal ── */
+  #ai-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(15,23,42,.6);
+    backdrop-filter: blur(3px);
+    align-items: center;
+    justify-content: center;
+  }
+  #ai-modal.open { display: flex; }
+  .modal-box {
+    background: #fff;
+    border-radius: 14px;
+    width: 520px;
+    max-width: 96vw;
+    box-shadow: 0 20px 60px rgba(0,0,0,.3);
+    overflow: hidden;
+  }
+  .modal-header {
+    background: #1e293b;
+    color: #fff;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-header h3 { font-size: 14px; font-weight: 700; }
+  .modal-header button { background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer; line-height: 1; }
+  .modal-header button:hover { color: #fff; }
+  .modal-body { padding: 20px; }
+
+  .drop-zone {
+    border: 2px dashed #cbd5e1;
+    border-radius: 10px;
+    padding: 28px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    margin-bottom: 14px;
+  }
+  .drop-zone:hover, .drop-zone.drag-over { border-color: #7c3aed; background: #faf5ff; }
+  .drop-zone .drop-icon { font-size: 32px; margin-bottom: 8px; }
+  .drop-zone p { font-size: 12px; color: #475569; }
+  .drop-zone small { font-size: 10px; color: #94a3b8; }
+  #file-input { display: none; }
+
+  #file-list { margin-bottom: 14px; }
+  .file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-bottom: 6px;
+    font-size: 11px;
+    color: #334155;
+  }
+  .file-item .file-name { display: flex; align-items: center; gap: 6px; }
+  .file-item button { background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 14px; }
+  .file-item button:hover { color: #ef4444; }
+
+  .modal-status {
+    font-size: 11px;
+    color: #475569;
+    min-height: 18px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .modal-status.error { color: #dc2626; }
+  .modal-status.success { color: #16a34a; }
+
+  .modal-footer {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    border-top: 1px solid #e2e8f0;
+    padding: 12px 20px;
+  }
+  .modal-footer button {
+    padding: 7px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .btn-cancel { background: #f1f5f9; color: #475569; }
+  .btn-cancel:hover { background: #e2e8f0; }
+  .btn-analyze { background: #7c3aed; color: #fff; }
+  .btn-analyze:hover { background: #6d28d9; }
+  .btn-analyze:disabled { background: #c4b5fd; cursor: not-allowed; }
+
+  /* spinner */
+  .spinner {
+    width: 14px; height: 14px;
+    border: 2px solid #e2e8f0;
+    border-top-color: #7c3aed;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* toast */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #1e293b;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(0,0,0,.25);
+    z-index: 300;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity .3s, transform .3s;
+    pointer-events: none;
+  }
+  #toast.show { opacity: 1; transform: translateY(0); }
+
   /* ── Print ── */
   @media print {
     #toolbar { display: none; }
@@ -567,6 +701,7 @@
 <!-- Toolbar -->
 <div id="toolbar">
   <h2>One Pager · Liqi Digital Assets</h2>
+  <button class="btn-ai" onclick="openUploadModal()">✦ Preencher com IA</button>
   <button class="btn-reset" onclick="resetFields()">Limpar campos</button>
   <button class="btn-print" onclick="window.print()">Imprimir / Exportar PDF</button>
 </div>
@@ -578,24 +713,24 @@
   <div class="doc-header">
     <div class="logo-liqi">liqi<span>.</span></div>
     <div class="header-tags">
-      <span class="tag-pill" contenteditable="true" data-default="[INSTRUMENTO]">[INSTRUMENTO]</span>
-      <span class="tag-pill" contenteditable="true" data-default="[TIPO DE OPERAÇÃO]">[TIPO DE OPERAÇÃO]</span>
-      <span class="tag-pill" contenteditable="true" data-default="[LASTRO]">[LASTRO]</span>
-      <span class="tag-pill" contenteditable="true" data-default="[TIPO DE ATIVO]">[TIPO DE ATIVO]</span>
+      <span class="tag-pill" contenteditable="true" data-field-id="tag_instrumento" data-default="[INSTRUMENTO]">[INSTRUMENTO]</span>
+      <span class="tag-pill" contenteditable="true" data-field-id="tag_tipo_operacao" data-default="[TIPO DE OPERAÇÃO]">[TIPO DE OPERAÇÃO]</span>
+      <span class="tag-pill" contenteditable="true" data-field-id="tag_lastro" data-default="[LASTRO]">[LASTRO]</span>
+      <span class="tag-pill" contenteditable="true" data-field-id="tag_tipo_ativo" data-default="[TIPO DE ATIVO]">[TIPO DE ATIVO]</span>
     </div>
   </div>
 
   <div class="doc-title">
-    <h1>One Pager — <span class="highlight" contenteditable="true" data-default="[NOME DA OPERAÇÃO]">[NOME DA OPERAÇÃO]</span></h1>
+    <h1>One Pager — <span class="highlight" contenteditable="true" data-field-id="nome_operacao" data-default="[NOME DA OPERAÇÃO]">[NOME DA OPERAÇÃO]</span></h1>
   </div>
   <div class="doc-subtitle">
-    <span contenteditable="true" data-default="[EMISSOR / CEDENTE]">[EMISSOR / CEDENTE]</span>
+    <span contenteditable="true" data-field-id="subtitulo_emissor" data-default="[EMISSOR / CEDENTE]">[EMISSOR / CEDENTE]</span>
     <span>·</span>
-    <span contenteditable="true" data-default="[ESTRUTURA]">[ESTRUTURA]</span>
+    <span contenteditable="true" data-field-id="subtitulo_estrutura" data-default="[ESTRUTURA]">[ESTRUTURA]</span>
     <span>·</span>
-    <span contenteditable="true" data-default="[VOLUME]">[VOLUME]</span>
+    <span contenteditable="true" data-field-id="subtitulo_volume" data-default="[VOLUME]">[VOLUME]</span>
     <span>·</span>
-    <span contenteditable="true" data-default="[MÊS / ANO]">[MÊS / ANO]</span>
+    <span contenteditable="true" data-field-id="subtitulo_mes_ano" data-default="[MÊS / ANO]">[MÊS / ANO]</span>
   </div>
 
   <hr class="divider">
@@ -609,18 +744,18 @@
     <div class="table-wrap">
       <table class="resumo-table">
         <tbody>
-          <tr><td>Instrumento</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
-          <tr><td>Tipo de Operação</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
-          <tr><td>Devedor / Cedente</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
-          <tr><td>Lastro</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
-          <tr><td>Volume</td><td><strong><span contenteditable="true" data-default="A definir">A definir</span></strong></td></tr>
-          <tr><td>Séries e Classes</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
-          <tr><td>Remunerações das Séries</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
-          <tr><td>Prazo</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
-          <tr><td>Garantia</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
-          <tr><td>Agente Fiduciário</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
-          <tr><td>Banco Liquidante e Escriturador</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
-          <tr><td>Custodiante</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Instrumento</td><td><span contenteditable="true" class="field-italic" data-field-id="s1_instrumento" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Tipo de Operação</td><td><span contenteditable="true" class="field-italic" data-field-id="s1_tipo_operacao" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Devedor / Cedente</td><td><span contenteditable="true" class="field-italic" data-field-id="s1_devedor_cedente" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Lastro</td><td><span contenteditable="true" class="field-italic" data-field-id="s1_lastro" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Volume</td><td><strong><span contenteditable="true" data-field-id="s1_volume" data-default="A definir">A definir</span></strong></td></tr>
+          <tr><td>Séries e Classes</td><td><span contenteditable="true" class="field-italic" data-field-id="s1_series_classes" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Remunerações das Séries</td><td><span contenteditable="true" class="field-italic" data-field-id="s1_remuneracoes" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Prazo</td><td><span contenteditable="true" class="field-italic" data-field-id="s1_prazo" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Garantia</td><td><span contenteditable="true" class="field-italic" data-field-id="s1_garantia" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Agente Fiduciário</td><td><span contenteditable="true" class="field-italic" data-field-id="s1_agente_fiduciario" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Banco Liquidante e Escriturador</td><td><span contenteditable="true" class="field-italic" data-field-id="s1_banco_liquidante" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Custodiante</td><td><span contenteditable="true" class="field-italic" data-field-id="s1_custodiante" data-default="A definir">A definir</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -641,24 +776,24 @@
         <!-- Devedores -->
         <div class="fluxo-actor">
           <div class="fluxo-icon">👤</div>
-          <strong contenteditable="true" data-default="[Devedores]">[Devedores]</strong>
-          <small contenteditable="true" data-default="ex: Clientes PF / Empresas Sacadas">ex: Clientes PF / Empresas Sacadas</small>
+          <strong contenteditable="true" data-field-id="s2_devedores_nome" data-default="[Devedores]">[Devedores]</strong>
+          <small contenteditable="true" data-field-id="s2_devedores_descricao" data-default="ex: Clientes PF / Empresas Sacadas">ex: Clientes PF / Empresas Sacadas</small>
         </div>
 
         <div class="fluxo-arrow">
-          <span class="arrow-label" contenteditable="true" data-default="① [lastro / crédito]">① [lastro / crédito]</span>
+          <span class="arrow-label" contenteditable="true" data-field-id="s2_seta1_label" data-default="① [lastro / crédito]">① [lastro / crédito]</span>
           <span class="arrow-line">→</span>
         </div>
 
         <!-- Cedente -->
         <div class="fluxo-actor">
           <div class="fluxo-icon">💼</div>
-          <strong contenteditable="true" data-default="[Cedente / Originador]">[Cedente / Originador]</strong>
-          <small contenteditable="true" data-default="ex: Nome da empresa">ex: Nome da empresa</small>
+          <strong contenteditable="true" data-field-id="s2_cedente_nome" data-default="[Cedente / Originador]">[Cedente / Originador]</strong>
+          <small contenteditable="true" data-field-id="s2_cedente_descricao" data-default="ex: Nome da empresa">ex: Nome da empresa</small>
         </div>
 
         <div class="fluxo-arrow">
-          <span class="arrow-label" contenteditable="true" data-default="② [cessão / CPR-F]">② [cessão / CPR-F]</span>
+          <span class="arrow-label" contenteditable="true" data-field-id="s2_seta2_label" data-default="② [cessão / CPR-F]">② [cessão / CPR-F]</span>
           <span class="arrow-line">⇄</span>
           <span class="arrow-label">② R$</span>
         </div>
@@ -671,7 +806,7 @@
         </div>
 
         <div class="fluxo-arrow">
-          <span class="arrow-label" contenteditable="true" data-default="③ [Títulos / Série]">③ [Títulos / Série]</span>
+          <span class="arrow-label" contenteditable="true" data-field-id="s2_seta3_label" data-default="③ [Títulos / Série]">③ [Títulos / Série]</span>
           <span class="arrow-line">⇄</span>
           <span class="arrow-label">③ R$</span>
         </div>
@@ -680,26 +815,26 @@
         <div class="fluxo-actor">
           <div class="fluxo-icon">👥</div>
           <strong>Investidores</strong>
-          <small contenteditable="true" data-default="ex: Qualificados / Profissionais">ex: Qualificados / Profissionais</small>
+          <small contenteditable="true" data-field-id="s2_investidores_tipo" data-default="ex: Qualificados / Profissionais">ex: Qualificados / Profissionais</small>
         </div>
       </div>
 
       <div class="fluxo-bottom">
         <div class="fluxo-secondary">
           <strong>Conta Vinculada / Centralizadora</strong>
-          <span contenteditable="true" data-default="[Banco — cód. XXX | Ag. XXX | Cta. XXXXXXX]">[Banco — cód. XXX | Ag. XXX | Cta. XXXXXXX]</span>
+          <span contenteditable="true" data-field-id="s2_conta_vinculada" data-default="[Banco — cód. XXX | Ag. XXX | Cta. XXXXXXX]">[Banco — cód. XXX | Ag. XXX | Cta. XXXXXXX]</span>
         </div>
         <div class="fluxo-secondary garantidor">
           <strong>Garantidor <em style="font-size:9px;font-weight:400;">— se aplicável</em></strong>
-          <span contenteditable="true" data-default="ex: BRDE / FGI / Avalista — Fiança / Aval">ex: BRDE / FGI / Avalista — Fiança / Aval</span>
+          <span contenteditable="true" data-field-id="s2_garantidor_desc" data-default="ex: BRDE / FGI / Avalista — Fiança / Aval">ex: BRDE / FGI / Avalista — Fiança / Aval</span>
         </div>
       </div>
 
       <div class="fluxo-steps">
         <ol id="fluxo-steps-list">
-          <li contenteditable="true" data-default="[Descrever passo 1 — ex: O Cedente cede os créditos em benefício da Liqi Securitizadora.]">[Descrever passo 1 — ex: O Cedente cede os créditos em benefício da Liqi Securitizadora.]</li>
-          <li contenteditable="true" data-default="[Descrever passo 2 — ex: A Liqi emite os títulos com lastro nos créditos cedidos. Os Investidores integralizam; a Liqi repassa os recursos ao Cedente.]">[Descrever passo 2 — ex: A Liqi emite os títulos com lastro nos créditos cedidos. Os Investidores integralizam; a Liqi repassa os recursos ao Cedente.]</li>
-          <li contenteditable="true" data-default="[Descrever passo 3 — ex: O Cedente realiza os pagamentos na Conta Vinculada. A Liqi utiliza os recursos para honrar amortizações e remuneração nas datas previstas.]">[Descrever passo 3 — ex: O Cedente realiza os pagamentos na Conta Vinculada. A Liqi utiliza os recursos para honrar amortizações e remuneração nas datas previstas.]</li>
+          <li contenteditable="true" data-field-id="s2_passo1" data-default="[Descrever passo 1 — ex: O Cedente cede os créditos em benefício da Liqi Securitizadora.]">[Descrever passo 1 — ex: O Cedente cede os créditos em benefício da Liqi Securitizadora.]</li>
+          <li contenteditable="true" data-field-id="s2_passo2" data-default="[Descrever passo 2 — ex: A Liqi emite os títulos com lastro nos créditos cedidos. Os Investidores integralizam; a Liqi repassa os recursos ao Cedente.]">[Descrever passo 2 — ex: A Liqi emite os títulos com lastro nos créditos cedidos. Os Investidores integralizam; a Liqi repassa os recursos ao Cedente.]</li>
+          <li contenteditable="true" data-field-id="s2_passo3" data-default="[Descrever passo 3 — ex: O Cedente realiza os pagamentos na Conta Vinculada. A Liqi utiliza os recursos para honrar amortizações e remuneração nas datas previstas.]">[Descrever passo 3 — ex: O Cedente realiza os pagamentos na Conta Vinculada. A Liqi utiliza os recursos para honrar amortizações e remuneração nas datas previstas.]</li>
         </ol>
       </div>
     </div>
@@ -715,35 +850,35 @@
     <div class="table-wrap" style="padding:10px 14px 6px; border-radius:8px;">
       <table class="resumo-table">
         <tbody>
-          <tr><td style="width:200px;">Data Limite de Revolvência</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+          <tr><td style="width:200px;">Data Limite de Revolvência</td><td><span contenteditable="true" class="field-italic" data-field-id="s3_data_limite" data-default="A definir">A definir</span></td></tr>
         </tbody>
       </table>
     </div>
     <div class="revolv-row">
       <div class="revolv-step">
-        <div class="step-day" contenteditable="true" data-default="D">D</div>
+        <div class="step-day" contenteditable="true" data-field-id="s3_etapa1_dia" data-default="D">D</div>
         <div class="step-title">Cedente indica créditos</div>
-        <div class="step-desc" contenteditable="true" data-default="Relação de créditos elegíveis a serem cedidos">Relação de créditos elegíveis a serem cedidos</div>
+        <div class="step-desc" contenteditable="true" data-field-id="s3_etapa1_desc" data-default="Relação de créditos elegíveis a serem cedidos">Relação de créditos elegíveis a serem cedidos</div>
       </div>
       <div class="revolv-step">
-        <div class="step-day" contenteditable="true" data-default="D + [X] DU">D + [X] DU</div>
+        <div class="step-day" contenteditable="true" data-field-id="s3_etapa2_dia" data-default="D + [X] DU">D + [X] DU</div>
         <div class="step-title">Liqi verifica e retorna</div>
-        <div class="step-desc" contenteditable="true" data-default="Análise de elegibilidade e aprovação dos créditos">Análise de elegibilidade e aprovação dos créditos</div>
+        <div class="step-desc" contenteditable="true" data-field-id="s3_etapa2_desc" data-default="Análise de elegibilidade e aprovação dos créditos">Análise de elegibilidade e aprovação dos créditos</div>
       </div>
       <div class="revolv-step">
-        <div class="step-day" contenteditable="true" data-default="D + [X] DU">D + [X] DU</div>
+        <div class="step-day" contenteditable="true" data-field-id="s3_etapa3_dia" data-default="D + [X] DU">D + [X] DU</div>
         <div class="step-title">Cessão formalizada</div>
-        <div class="step-desc" contenteditable="true" data-default="Assinatura do Termo de Cessão">Assinatura do Termo de Cessão</div>
+        <div class="step-desc" contenteditable="true" data-field-id="s3_etapa3_desc" data-default="Assinatura do Termo de Cessão">Assinatura do Termo de Cessão</div>
       </div>
       <div class="revolv-step">
-        <div class="step-day" contenteditable="true" data-default="D + [X] DU">D + [X] DU</div>
+        <div class="step-day" contenteditable="true" data-field-id="s3_etapa4_dia" data-default="D + [X] DU">D + [X] DU</div>
         <div class="step-title">Desembolso realizado</div>
-        <div class="step-desc" contenteditable="true" data-default="Transferência ao Cedente">Transferência ao Cedente</div>
+        <div class="step-desc" contenteditable="true" data-field-id="s3_etapa4_desc" data-default="Transferência ao Cedente">Transferência ao Cedente</div>
       </div>
       <div class="revolv-step">
-        <div class="step-day" contenteditable="true" data-default="D + [X] DU">D + [X] DU</div>
+        <div class="step-day" contenteditable="true" data-field-id="s3_etapa5_dia" data-default="D + [X] DU">D + [X] DU</div>
         <div class="step-title">Aditamento escritura / TS</div>
-        <div class="step-desc" contenteditable="true" data-default="Atualização dos documentos da emissão">Atualização dos documentos da emissão</div>
+        <div class="step-desc" contenteditable="true" data-field-id="s3_etapa5_desc" data-default="Atualização dos documentos da emissão">Atualização dos documentos da emissão</div>
       </div>
     </div>
   </div>
@@ -758,28 +893,28 @@
     <div class="table-wrap" style="padding:10px 14px 6px; border-radius:8px 8px 0 0; border-bottom:none;">
       <table class="resumo-table">
         <tbody>
-          <tr><td style="width:200px;">Garantidor</td><td><span contenteditable="true" class="field-italic" data-default="A definir — se aplicável">A definir — se aplicável</span></td></tr>
+          <tr><td style="width:200px;">Garantidor</td><td><span contenteditable="true" class="field-italic" data-field-id="s4_garantidor" data-default="A definir — se aplicável">A definir — se aplicável</span></td></tr>
         </tbody>
       </table>
     </div>
     <div class="garantia-flow">
       <div class="gar-box">
         <div class="gar-label">Devedor / Cedente</div>
-        <strong contenteditable="true" data-default="[Nome]">[Nome]</strong>
-        <p contenteditable="true" data-default="[Obrigação garantida — ex: pagamento das Debêntures]">[Obrigação garantida — ex: pagamento das Debêntures]</p>
+        <strong contenteditable="true" data-field-id="s4_cedente_nome" data-default="[Nome]">[Nome]</strong>
+        <p contenteditable="true" data-field-id="s4_cedente_obrigacao" data-default="[Obrigação garantida — ex: pagamento das Debêntures]">[Obrigação garantida — ex: pagamento das Debêntures]</p>
       </div>
       <div class="gar-arrow">›</div>
       <div class="gar-box center">
         <div class="gar-label">Garantia</div>
-        <strong contenteditable="true" data-default="[Tipo de Garantia]">[Tipo de Garantia]</strong>
-        <p contenteditable="true" data-default="ex: Alienação fiduciária de imóvel / Aval dos sócios / FGI / Cessão fiduciária">ex: Alienação fiduciária de imóvel / Aval dos sócios / FGI / Cessão fiduciária</p>
+        <strong contenteditable="true" data-field-id="s4_tipo_garantia" data-default="[Tipo de Garantia]">[Tipo de Garantia]</strong>
+        <p contenteditable="true" data-field-id="s4_tipo_garantia_desc" data-default="ex: Alienação fiduciária de imóvel / Aval dos sócios / FGI / Cessão fiduciária">ex: Alienação fiduciária de imóvel / Aval dos sócios / FGI / Cessão fiduciária</p>
       </div>
       <div class="gar-arrow">›</div>
       <div class="gar-box right">
         <div class="gar-label">Beneficiário</div>
         <strong>Agente Fiduciário / Liqi</strong>
         <p>Em favor dos Investidores</p>
-        <p contenteditable="true" data-default="[Instrumento: ex: Escritura de Alienação / Contrato de Aval]">[Instrumento: ex: Escritura de Alienação / Contrato de Aval]</p>
+        <p contenteditable="true" data-field-id="s4_instrumento_garantia" data-default="[Instrumento: ex: Escritura de Alienação / Contrato de Aval]">[Instrumento: ex: Escritura de Alienação / Contrato de Aval]</p>
       </div>
     </div>
   </div>
@@ -797,11 +932,11 @@
         <tbody>
           <tr>
             <td>Remuneração</td>
-            <td><em>Periodicidade: </em><span contenteditable="true" data-default="A definir">A definir</span> | <em>1ª Data: </em><span contenteditable="true" data-default="A definir">A definir</span></td>
+            <td><em>Periodicidade: </em><span contenteditable="true" data-field-id="s5_remuneracao_period" data-default="A definir">A definir</span> | <em>1ª Data: </em><span contenteditable="true" data-field-id="s5_remuneracao_data" data-default="A definir">A definir</span></td>
           </tr>
           <tr>
             <td>Amort. Programada</td>
-            <td><em>Periodicidade: </em><span contenteditable="true" data-default="A definir">A definir</span> | <em>1ª Data: </em><span contenteditable="true" data-default="A definir">A definir</span></td>
+            <td><em>Periodicidade: </em><span contenteditable="true" data-field-id="s5_amort_period" data-default="A definir">A definir</span> | <em>1ª Data: </em><span contenteditable="true" data-field-id="s5_amort_data" data-default="A definir">A definir</span></td>
           </tr>
           <tr>
             <td>Amort. Extraordinária</td>
@@ -809,7 +944,7 @@
               <span class="badge-sim">Sim</span>
               <br><br>
               <span style="font-size:10px; color:#475569;">Principais hipóteses: </span>
-              <span contenteditable="true" style="font-size:10px;" data-default="ex: (i) cash sweep — saldo ≥ R$ [X] na Conta Centralizadora, em até [X] DU da Data de Verificação, limitada a [X]% do VNU; (ii) evento de recompra compulsória">ex: (i) cash sweep — saldo ≥ R$ [X] na Conta Centralizadora, em até [X] DU da Data de Verificação, limitada a [X]% do VNU; (ii) evento de recompra compulsória</span>
+              <span contenteditable="true" style="font-size:10px;" data-field-id="s5_amort_extra_hipoteses" data-default="ex: (i) cash sweep — saldo ≥ R$ [X] na Conta Centralizadora, em até [X] DU da Data de Verificação, limitada a [X]% do VNU; (ii) evento de recompra compulsória">ex: (i) cash sweep — saldo ≥ R$ [X] na Conta Centralizadora, em até [X] DU da Data de Verificação, limitada a [X]% do VNU; (ii) evento de recompra compulsória</span>
             </td>
           </tr>
         </tbody>
@@ -823,12 +958,12 @@
           <tr>
             <td>Data de Verificação</td>
             <td>
-              <span contenteditable="true" class="field-italic" data-default="A definir">A definir</span><br>
-              <small style="color:#94a3b8;">1ª Data de Verificação: <span contenteditable="true" data-default="A definir">A definir</span></small>
+              <span contenteditable="true" class="field-italic" data-field-id="s5_data_verificacao" data-default="A definir">A definir</span><br>
+              <small style="color:#94a3b8;">1ª Data de Verificação: <span contenteditable="true" data-field-id="s5_1a_data_verificacao" data-default="A definir">A definir</span></small>
             </td>
           </tr>
-          <tr><td>Índices da Operação</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
-          <tr><td>Outros Acompanhamentos</td><td><span contenteditable="true" class="field-italic" data-default="A definir — caso a caso">A definir — caso a caso</span></td></tr>
+          <tr><td>Índices da Operação</td><td><span contenteditable="true" class="field-italic" data-field-id="s5_indices" data-default="A definir">A definir</span></td></tr>
+          <tr><td>Outros Acompanhamentos</td><td><span contenteditable="true" class="field-italic" data-field-id="s5_outros_acomp" data-default="A definir — caso a caso">A definir — caso a caso</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -838,8 +973,8 @@
         <div class="sub-table-title">Fundo de Despesa</div>
         <table class="sub-table">
           <tbody>
-            <tr><td>Valor Inicial</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
-            <tr><td>Valor Mínimo</td><td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td></tr>
+            <tr><td>Valor Inicial</td><td><span contenteditable="true" class="field-italic" data-field-id="s5_fundo_desp_inicial" data-default="A definir">A definir</span></td></tr>
+            <tr><td>Valor Mínimo</td><td><span contenteditable="true" class="field-italic" data-field-id="s5_fundo_desp_minimo" data-default="A definir">A definir</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -847,8 +982,8 @@
         <div class="sub-table-title" style="background:#475569;">Fundo de Reserva <span class="badge-caso" style="background:rgba(255,255,255,.2);color:#fff;">CASO A CASO</span></div>
         <table class="sub-table">
           <tbody>
-            <tr><td>Valor Inicial</td><td><span contenteditable="true" data-default="N/A">N/A</span></td></tr>
-            <tr><td>Valor Mínimo</td><td><span contenteditable="true" data-default="N/A">N/A</span></td></tr>
+            <tr><td>Valor Inicial</td><td><span contenteditable="true" data-field-id="s5_fundo_res_inicial" data-default="N/A">N/A</span></td></tr>
+            <tr><td>Valor Mínimo</td><td><span contenteditable="true" data-field-id="s5_fundo_res_minimo" data-default="N/A">N/A</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -866,10 +1001,10 @@
         <div class="cascata-header ordinaria">Cascata Ordinária</div>
         <div class="cascata-body">
           <ol id="cascata-ord">
-            <li><span contenteditable="true" data-default="ex: Fundo de Despesas — recomposição">ex: Fundo de Despesas — recomposição</span><small contenteditable="true" data-default="[sub-detalhe se necessário]">[sub-detalhe se necessário]</small></li>
-            <li><span contenteditable="true" data-default="ex: Remuneração dos titulares">ex: Remuneração dos titulares</span></li>
-            <li><span contenteditable="true" data-default="ex: Amortização Extraordinária">ex: Amortização Extraordinária</span><small contenteditable="true" data-default="[condições do cash sweep]">[condições do cash sweep]</small></li>
-            <li><span contenteditable="true" class="field-italic" data-default="Demais itens — a definir">Demais itens — a definir</span></li>
+            <li><span contenteditable="true" data-field-id="s6_ord_item1" data-default="ex: Fundo de Despesas — recomposição">ex: Fundo de Despesas — recomposição</span><small contenteditable="true" data-field-id="s6_ord_item1_sub" data-default="[sub-detalhe se necessário]">[sub-detalhe se necessário]</small></li>
+            <li><span contenteditable="true" data-field-id="s6_ord_item2" data-default="ex: Remuneração dos titulares">ex: Remuneração dos titulares</span></li>
+            <li><span contenteditable="true" data-field-id="s6_ord_item3" data-default="ex: Amortização Extraordinária">ex: Amortização Extraordinária</span><small contenteditable="true" data-field-id="s6_ord_item3_sub" data-default="[condições do cash sweep]">[condições do cash sweep]</small></li>
+            <li><span contenteditable="true" class="field-italic" data-field-id="s6_ord_item4" data-default="Demais itens — a definir">Demais itens — a definir</span></li>
           </ol>
         </div>
       </div>
@@ -877,16 +1012,16 @@
         <div class="cascata-header extraordinaria">Cascata Extraordinária</div>
         <div class="cascata-body">
           <ol id="cascata-ext">
-            <li><span contenteditable="true" data-default="ex: Recompra Compulsória de Direitos Creditórios">ex: Recompra Compulsória de Direitos Creditórios</span><small contenteditable="true" data-default="[evento que a aciona]">[evento que a aciona]</small></li>
-            <li><span contenteditable="true" data-default="ex: Amortização Extraordinária das Debêntures">ex: Amortização Extraordinária das Debêntures</span><small contenteditable="true" data-default="[limite aplicável]">[limite aplicável]</small></li>
-            <li><span contenteditable="true" class="field-italic" data-default="Demais itens — a definir">Demais itens — a definir</span></li>
+            <li><span contenteditable="true" data-field-id="s6_ext_item1" data-default="ex: Recompra Compulsória de Direitos Creditórios">ex: Recompra Compulsória de Direitos Creditórios</span><small contenteditable="true" data-field-id="s6_ext_item1_sub" data-default="[evento que a aciona]">[evento que a aciona]</small></li>
+            <li><span contenteditable="true" data-field-id="s6_ext_item2" data-default="ex: Amortização Extraordinária das Debêntures">ex: Amortização Extraordinária das Debêntures</span><small contenteditable="true" data-field-id="s6_ext_item2_sub" data-default="[limite aplicável]">[limite aplicável]</small></li>
+            <li><span contenteditable="true" class="field-italic" data-field-id="s6_ext_item3" data-default="Demais itens — a definir">Demais itens — a definir</span></li>
           </ol>
         </div>
       </div>
     </div>
     <div class="ativacao-box">
       <div class="ativacao-label">Ativação da Cascata Extraordinária</div>
-      <p contenteditable="true" data-default="A cascata extraordinária será acionada quando ocorrer qualquer dos seguintes eventos: (a) [descrever evento A — ex: evento de recompra compulsória pelo cedente]; (b) [descrever evento B]; (c) [descrever evento C — a definir].">A cascata extraordinária será acionada quando ocorrer qualquer dos seguintes eventos: (a) [descrever evento A — ex: evento de recompra compulsória pelo cedente]; (b) [descrever evento B]; (c) [descrever evento C — a definir].</p>
+      <p contenteditable="true" data-field-id="s6_ativacao" data-default="A cascata extraordinária será acionada quando ocorrer qualquer dos seguintes eventos: (a) [descrever evento A — ex: evento de recompra compulsória pelo cedente]; (b) [descrever evento B]; (c) [descrever evento C — a definir].">A cascata extraordinária será acionada quando ocorrer qualquer dos seguintes eventos: (a) [descrever evento A — ex: evento de recompra compulsória pelo cedente]; (b) [descrever evento B]; (c) [descrever evento C — a definir].</p>
     </div>
   </div>
 
@@ -908,23 +1043,23 @@
         <tbody>
           <tr>
             <td>Fee de Estruturação</td>
-            <td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td>
-            <td><span contenteditable="true" class="field-italic" data-default="—">—</span></td>
+            <td><span contenteditable="true" class="field-italic" data-field-id="s7_fee_estruturacao_val" data-default="A definir">A definir</span></td>
+            <td><span contenteditable="true" class="field-italic" data-field-id="s7_fee_estruturacao_per" data-default="—">—</span></td>
           </tr>
           <tr>
             <td>Fee de Distribuição</td>
-            <td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td>
-            <td><span contenteditable="true" class="field-italic" data-default="—">—</span></td>
+            <td><span contenteditable="true" class="field-italic" data-field-id="s7_fee_distribuicao_val" data-default="A definir">A definir</span></td>
+            <td><span contenteditable="true" class="field-italic" data-field-id="s7_fee_distribuicao_per" data-default="—">—</span></td>
           </tr>
           <tr>
             <td>Fee de Administração / Escrituração</td>
-            <td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td>
-            <td><span contenteditable="true" class="field-italic" data-default="—">—</span></td>
+            <td><span contenteditable="true" class="field-italic" data-field-id="s7_fee_admin_val" data-default="A definir">A definir</span></td>
+            <td><span contenteditable="true" class="field-italic" data-field-id="s7_fee_admin_per" data-default="—">—</span></td>
           </tr>
           <tr>
             <td>Outras Remunerações</td>
-            <td><span contenteditable="true" class="field-italic" data-default="A definir">A definir</span></td>
-            <td><span contenteditable="true" class="field-italic" data-default="—">—</span></td>
+            <td><span contenteditable="true" class="field-italic" data-field-id="s7_fee_outros_val" data-default="A definir">A definir</span></td>
+            <td><span contenteditable="true" class="field-italic" data-field-id="s7_fee_outros_per" data-default="—">—</span></td>
           </tr>
         </tbody>
       </table>
@@ -938,12 +1073,12 @@
       <span class="section-label">Informações Adicionais</span>
     </div>
     <div class="info-block">
-      <div class="info-block-title" contenteditable="true" data-default="[TÍTULO DO BLOCO — EX: MECANISMO DE PAGAMENTO]">[TÍTULO DO BLOCO — EX: MECANISMO DE PAGAMENTO]</div>
-      <p contenteditable="true" data-default="Texto da informação adicional. Descrever o mecanismo de pagamento, fluxo de recursos ou qualquer aspecto relevante da operação que mereça destaque ao leitor.">Texto da informação adicional. Descrever o mecanismo de pagamento, fluxo de recursos ou qualquer aspecto relevante da operação que mereça destaque ao leitor.</p>
+      <div class="info-block-title" contenteditable="true" data-field-id="s8_bloco1_titulo" data-default="[TÍTULO DO BLOCO — EX: MECANISMO DE PAGAMENTO]">[TÍTULO DO BLOCO — EX: MECANISMO DE PAGAMENTO]</div>
+      <p contenteditable="true" data-field-id="s8_bloco1_texto" data-default="Texto da informação adicional. Descrever o mecanismo de pagamento, fluxo de recursos ou qualquer aspecto relevante da operação que mereça destaque ao leitor.">Texto da informação adicional. Descrever o mecanismo de pagamento, fluxo de recursos ou qualquer aspecto relevante da operação que mereça destaque ao leitor.</p>
     </div>
     <div class="info-block orange">
-      <div class="info-block-title" contenteditable="true" data-default="[TÍTULO DO 2º BLOCO — SE APLICÁVEL]">[TÍTULO DO 2º BLOCO — SE APLICÁVEL]</div>
-      <p contenteditable="true" data-default="Texto complementar — ex: detalhamento sobre amortização extraordinária, aceleração de vencimento ou eventos de inadimplência relevantes.">Texto complementar — ex: detalhamento sobre amortização extraordinária, aceleração de vencimento ou eventos de inadimplência relevantes.</p>
+      <div class="info-block-title" contenteditable="true" data-field-id="s8_bloco2_titulo" data-default="[TÍTULO DO 2º BLOCO — SE APLICÁVEL]">[TÍTULO DO 2º BLOCO — SE APLICÁVEL]</div>
+      <p contenteditable="true" data-field-id="s8_bloco2_texto" data-default="Texto complementar — ex: detalhamento sobre amortização extraordinária, aceleração de vencimento ou eventos de inadimplência relevantes.">Texto complementar — ex: detalhamento sobre amortização extraordinária, aceleração de vencimento ou eventos de inadimplência relevantes.</p>
     </div>
   </div>
 
@@ -956,7 +1091,38 @@
 
 </div>
 
+<!-- Modal de Upload IA -->
+<div id="ai-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>✦ Preencher com IA — Envie os documentos da operação</h3>
+      <button onclick="closeUploadModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+        <div class="drop-icon">📄</div>
+        <p>Clique ou arraste os documentos aqui</p>
+        <small>PDF, DOCX ou TXT · até 5 arquivos · 20 MB cada</small>
+      </div>
+      <input type="file" id="file-input" multiple accept=".pdf,.docx,.txt">
+      <div id="file-list"></div>
+      <div class="modal-status" id="modal-status"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeUploadModal()">Cancelar</button>
+      <button class="btn-analyze" id="btn-analyze" onclick="analyzeDocuments()" disabled>Analisar Documentos</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
 <script>
+  // ── Config ──────────────────────────────────────────────
+  const API_URL = 'http://localhost:3001/api/extract';
+
+  // ── Reset / Focus ────────────────────────────────────────
   function resetFields() {
     if (!confirm('Limpar todos os campos e restaurar os valores padrão?')) return;
     document.querySelectorAll('[contenteditable][data-default]').forEach(el => {
@@ -964,7 +1130,6 @@
     });
   }
 
-  // Highlight placeholder on focus
   document.querySelectorAll('[contenteditable="true"]').forEach(el => {
     el.addEventListener('focus', function() {
       const def = this.dataset.default;
@@ -977,6 +1142,141 @@
       }
     });
   });
+
+  // ── Modal ────────────────────────────────────────────────
+  let selectedFiles = [];
+
+  function openUploadModal() {
+    selectedFiles = [];
+    renderFileList();
+    setStatus('');
+    document.getElementById('ai-modal').classList.add('open');
+  }
+
+  function closeUploadModal() {
+    document.getElementById('ai-modal').classList.remove('open');
+    document.getElementById('file-input').value = '';
+  }
+
+  // Fechar ao clicar fora
+  document.getElementById('ai-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeUploadModal();
+  });
+
+  // ── Drag and drop ────────────────────────────────────────
+  const dropZone = document.getElementById('drop-zone');
+
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    addFiles(Array.from(e.dataTransfer.files));
+  });
+
+  document.getElementById('file-input').addEventListener('change', function() {
+    addFiles(Array.from(this.files));
+    this.value = '';
+  });
+
+  function addFiles(files) {
+    const allowed = ['.pdf', '.docx', '.txt'];
+    files.forEach(f => {
+      const ext = f.name.slice(f.name.lastIndexOf('.')).toLowerCase();
+      if (!allowed.includes(ext)) { showToast(`Formato não suportado: ${f.name}`); return; }
+      if (f.size > 20 * 1024 * 1024) { showToast(`Arquivo muito grande: ${f.name}`); return; }
+      if (selectedFiles.length >= 5) { showToast('Máximo de 5 arquivos.'); return; }
+      if (selectedFiles.find(x => x.name === f.name)) return;
+      selectedFiles.push(f);
+    });
+    renderFileList();
+    setStatus('');
+  }
+
+  function removeFile(name) {
+    selectedFiles = selectedFiles.filter(f => f.name !== name);
+    renderFileList();
+  }
+
+  function renderFileList() {
+    const list = document.getElementById('file-list');
+    list.innerHTML = selectedFiles.map(f => `
+      <div class="file-item">
+        <span class="file-name">📄 ${f.name} <span style="color:#94a3b8;font-size:10px;">(${(f.size/1024).toFixed(0)} KB)</span></span>
+        <button onclick="removeFile('${f.name.replace(/'/g, "\\'")}')">×</button>
+      </div>`).join('');
+    document.getElementById('btn-analyze').disabled = selectedFiles.length === 0;
+  }
+
+  // ── Status ───────────────────────────────────────────────
+  function setStatus(msg, type = '') {
+    const el = document.getElementById('modal-status');
+    el.className = 'modal-status' + (type ? ' ' + type : '');
+    el.innerHTML = msg;
+  }
+
+  // ── Analisar ─────────────────────────────────────────────
+  async function analyzeDocuments() {
+    if (selectedFiles.length === 0) return;
+
+    const btn = document.getElementById('btn-analyze');
+    btn.disabled = true;
+    setStatus('<div class="spinner"></div> Enviando documentos e consultando a IA...');
+
+    const formData = new FormData();
+    selectedFiles.forEach(f => formData.append('documents', f));
+
+    try {
+      const resp = await fetch(API_URL, { method: 'POST', body: formData });
+      const json = await resp.json();
+
+      if (!json.success) throw new Error(json.error || 'Erro desconhecido.');
+
+      const filled = fillFields(json.data);
+      closeUploadModal();
+      showToast(`✓ ${filled} campos preenchidos automaticamente.`);
+    } catch (err) {
+      setStatus('⚠ ' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  // ── Fill Fields ──────────────────────────────────────────
+  function fillFields(data) {
+    if (!data || !data.onepager) return 0;
+
+    // Achatar o JSON em {fieldId: value}
+    const flat = {};
+    function flatten(obj) {
+      if (!obj || typeof obj !== 'object') return;
+      Object.entries(obj).forEach(([k, v]) => {
+        if (v !== null && typeof v === 'object') flatten(v);
+        else if (v !== null && v !== undefined) flat[k] = String(v);
+      });
+    }
+    flatten(data.onepager);
+
+    let count = 0;
+    Object.entries(flat).forEach(([fieldId, value]) => {
+      const el = document.querySelector(`[data-field-id="${fieldId}"]`);
+      if (el && value) {
+        el.textContent = value;
+        el.style.fontStyle = 'normal';
+        el.style.color = '';
+        count++;
+      }
+    });
+    return count;
+  }
+
+  // ── Toast ────────────────────────────────────────────────
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
 </script>
 </body>
 </html>
