@@ -217,20 +217,26 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    min-width: 100px;
+    min-width: 90px;
+    max-width: 130px;
   }
   .fluxo-icon {
-    font-size: 28px;
+    font-size: 24px;
     margin-bottom: 4px;
+    flex-shrink: 0;
   }
   .fluxo-actor strong {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     color: #1e293b;
+    word-break: break-word;
+    line-height: 1.3;
   }
   .fluxo-actor small {
-    font-size: 9px;
+    font-size: 8px;
     color: #64748b;
+    word-break: break-word;
+    line-height: 1.3;
   }
   .fluxo-actor.highlight-box {
     border: 2px solid #2563eb;
@@ -248,16 +254,21 @@
     color: #2563eb;
     font-weight: 600;
     gap: 2px;
-    min-width: 70px;
+    min-width: 60px;
+    max-width: 110px;
+    flex-shrink: 1;
   }
   .arrow-label {
     background: #eff6ff;
     border: 1px solid #bfdbfe;
     border-radius: 4px;
-    padding: 1px 5px;
+    padding: 2px 5px;
     font-size: 8px;
     text-align: center;
-    white-space: nowrap;
+    white-space: normal;
+    word-break: break-word;
+    max-width: 100px;
+    line-height: 1.3;
   }
   .arrow-line { font-size: 16px; line-height: 1; }
 
@@ -272,9 +283,11 @@
     border-radius: 8px;
     padding: 8px 14px;
     text-align: center;
-    font-size: 10px;
+    font-size: 9px;
     color: #475569;
     flex: 1;
+    word-break: break-word;
+    line-height: 1.4;
   }
   .fluxo-secondary.garantidor {
     border-color: #e879f9;

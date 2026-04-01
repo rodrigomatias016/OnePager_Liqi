@@ -21,7 +21,14 @@ REGRAS OBRIGATÓRIAS:
 4. Percentuais: "X,XX% a.a." ou "X,XX% a.m." conforme aplicável. Para taxa indexada: "CDI + X,XX% a.a." ou "IPCA + X,XX% a.a.".
 5. Datas: "DD de mês por extenso de AAAA" (ex: "15 de março de 2025"). Para periodicidades: "Mensal", "Trimestral", "Semestral", "Anual".
 6. Prazo: inclua a unidade e o vencimento (ex: "36 meses (vencimento em jun/2027)").
-7. Fluxograma (s2_passo1/2/3): escreva frases narrativas completas descrevendo o fluxo real da operação extraído dos documentos. Seja específico com nomes das partes e instrumentos.
+7. Fluxograma — REGRAS DE FORMATO OBRIGATÓRIAS:
+   - s2_devedores_nome, s2_cedente_nome: apenas o nome curto da empresa (máx. 4 palavras, ex: "Odessa Participações S.A.")
+   - s2_devedores_descricao, s2_cedente_descricao: descrição curta do papel (máx. 6 palavras, ex: "Emissora das Debêntures Lastro")
+   - s2_investidores_tipo: tipo de investidor curto (máx. 5 palavras, ex: "Investidores Profissionais (CVM 30)")
+   - s2_seta1_label, s2_seta2_label, s2_seta3_label: label CURTO para a seta, máx. 6 palavras (ex: "① Debêntures Lastro", "② Cessão Fiduciária", "③ Debêntures Securitizadas")
+   - s2_conta_vinculada: banco + número resumido (máx. 2 linhas curtas)
+   - s2_garantidor_desc: nome curto do garantidor e tipo de garantia (máx. 2 linhas)
+   - s2_passo1/2/3: frases narrativas COMPLETAS descrevendo o fluxo real — aqui pode ser longo, pois é texto corrido abaixo do diagrama
 8. Cascata: mantenha a ordem de prioridade exatamente como consta nos documentos.
 9. Fees Liqi: extraia apenas valores explicitamente mencionados como remuneração à Liqi ou à securitizadora. Se não houver, use null.
 10. metadata.confianca_geral: "alta" se >75% dos campos preenchidos, "media" se 40-75%, "baixa" se <40%.
