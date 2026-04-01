@@ -29,8 +29,18 @@ REGRAS OBRIGATÓRIAS:
    - s2_conta_vinculada: banco + número resumido (máx. 2 linhas curtas)
    - s2_garantidor_desc: nome curto do garantidor e tipo de garantia (máx. 2 linhas)
    - s2_passo1/2/3: frases narrativas COMPLETAS descrevendo o fluxo real — aqui pode ser longo, pois é texto corrido abaixo do diagrama
+   - MAPEAMENTO DE ATORES em estruturas de dois níveis (Debêntures Lastro + Debêntures Securitizadas):
+     * s2_devedores_nome/descricao = empresa que emite/gera os recebíveis ou ativos lastro (ex: tomadora do crédito, emissora das Debêntures Lastro). NÃO é a securitizadora.
+     * s2_cedente_nome/descricao = empresa que cede ou estrutura a operação intermediária entre o devedor e a securitizadora (ex: emissora/cedente das Debêntures Lastro). Pode coincidir com s2_devedores se for emissão direta.
+     * A Liqi Securitizadora (ou outra securitizadora) ocupa o bloco CENTRAL do fluxograma — NUNCA preencha s2_cedente ou s2_devedores com o nome da securitizadora que já está no centro.
+     * Exemplo correto: s2_devedores = "Odessa Participações S.A." (emissora Debêntures Lastro); s2_cedente = "Odessa Participações S.A." (cedente das Debêntures Lastro à securitizadora); bloco central = Liqi Securitizadora.
 8. Cascata: mantenha a ordem de prioridade exatamente como consta nos documentos.
-9. Fees Liqi: extraia apenas valores explicitamente mencionados como remuneração à Liqi ou à securitizadora. Se não houver, use null.
+9. Fees Liqi: extraia valores de remuneração à Liqi ou à securitizadora buscando PRIORITARIAMENTE em:
+   - Anexo II (ou seção "Despesas da Emissão", "Tabela de Custos", "Custos da Operação") do documento principal
+   - Linhas contendo "Taxa de Gestão", "Estruturação e Emissão", "Fee de Estruturação", "Fee de Administração", "Remuneração da Securitizadora", "Taxa de Administração Liqi"
+   - Mapeamento: fee único/flat de estruturação → s7_fee_estruturacao_val (e percentual se houver → s7_fee_estruturacao_per); taxa recorrente mensal/anual de gestão ou administração → s7_fee_admin_val + s7_fee_admin_per; fee de distribuição → s7_fee_distribuicao_val/per; outros → s7_fee_outros_val/per.
+   - Se o valor for mensal, registre em s7_fee_admin_per como "R$ X.XXX,00/mês".
+   - Se não houver qualquer referência explícita, use null.
 10. metadata.confianca_geral: "alta" se >75% dos campos preenchidos, "media" se 40-75%, "baixa" se <40%.
 11. metadata.campos_nao_encontrados: lista exata das chaves JSON que ficaram null.
 12. Se um documento mencionar múltiplas séries, descreva todas em s1_series_classes e s1_remuneracoes.
